@@ -1,0 +1,14 @@
+const pathList = './src/database/jadiBotList.json';
+
+
+import fs from 'fs';
+
+
+export const loadJadiBotList = () => {
+    if (!fs.existsSync(pathList)) fs.writeFileSync(pathList, JSON.stringify([]));
+    return JSON.parse(fs.readFileSync(pathList, 'utf-8'));
+};
+
+export const saveJadiBotList = (list) => {
+    fs.writeFileSync(pathList, JSON.stringify(list, null, 2));
+};

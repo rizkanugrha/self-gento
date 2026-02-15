@@ -1,0 +1,22 @@
+import { loadJadiBotList } from '../../lib/jadibot-store.js';
+
+export default {
+    name: 'listjadibot',
+    aliases: ['listjadibot', 'listbotcab', 'botcab'],
+    category: 'Owner',
+    usage: '',
+    pconly: false,
+    group: false,
+    admin: false,
+    botAdmin: false,
+    owner: true,
+
+    execute: async (m, client) => {
+        const list = loadJadiBotList();
+
+        if (!list.length) return m.reply('📵 Tidak ada bot cabang yang aktif saat ini.');
+
+        const teks = list.map((nomor, i) => `${i + 1}. wa.me/${nomor}`).join('\n');
+        m.reply(`📋 *Daftar Bot Cabang Aktif:*\n\n${teks}`);
+    }
+};

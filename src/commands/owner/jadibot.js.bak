@@ -1,0 +1,24 @@
+import { startJadiBot } from '../../handlers/jadiBot-handler.js';
+import { loadJadiBotList, saveJadiBotList } from '../../lib/jadibot-store.js';
+
+export default {
+    name: 'jadibot',
+    aliases: ['jadibot'],
+    category: 'Owner',
+    usage: '628xxxx',
+    pconly: false,
+    group: false,
+    admin: false,
+    botAdmin: false,
+    owner: true,
+
+    execute: async (m, client, { args }) => {
+        const targetNumber = args[0]?.replace(/[^0-9]/g, '');
+        if (!targetNumber) return m.reply('⚠️ Contoh penggunaan:\n.jadibot 628xxxx');
+
+        const list = loadJadiBotList();
+        if (list.includes(targetNumber)) return m.reply('⚠️ Nomor ini sudah aktif sebagai bot!');
+
+        startJadiBot(targetNumber, m);
+    }
+};
