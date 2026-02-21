@@ -47,11 +47,11 @@ function restart() {
 }
 
 // Watchdog
-setInterval(() => {
+/**setInterval(() => {
     if (Date.now() - lastHeartbeat > 3 * 60 * 1000) {
         console.warn('[WATCHDOG] No heartbeat');
         restart();
     }
-}, 60_000);
+}, 60_000);*/
 
 start();
