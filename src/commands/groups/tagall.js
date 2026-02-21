@@ -1,4 +1,4 @@
-import { jidDecode, generateWAMessageFromContent } from "@whiskeysockets/baileys"
+import { jidDecode, generateWAMessageFromContent } from "baileys"
 import util from 'util'
 
 export default {

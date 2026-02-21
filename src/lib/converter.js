@@ -13,7 +13,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import { randomBytes } from 'crypto'
 import { writeFileSync, readFileSync, unlinkSync, existsSync, promises } from 'fs'
 
-import { getHttpStream, toBuffer } from '@whiskeysockets/baileys'
+import { getHttpStream, toBuffer } from 'baileys'
 import sharp from 'sharp'
 import { spawn } from 'child_process'
 import path from 'path'

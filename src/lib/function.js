@@ -15,7 +15,7 @@ import {
 	readdirSync,
 	statSync
 } from 'fs';
-import { S_WHATSAPP_NET, getHttpStream, toBuffer } from '@whiskeysockets/baileys';
+import { S_WHATSAPP_NET, getHttpStream, toBuffer } from 'baileys';
 
 if (!existsSync('./src/assets/temp')) mkdirSync('./src/assets/temp', { recursive: true });
 

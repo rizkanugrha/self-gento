@@ -1,4 +1,4 @@
-import { getDevice } from "@whiskeysockets/baileys"
+import { getDevice } from "baileys"
 import { pasaran } from "../lib/tgl.cjs"
 import config from "../utils/config.js"
 const more = String.fromCharCode(8206)

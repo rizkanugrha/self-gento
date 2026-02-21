@@ -1,4 +1,4 @@
-import { delay } from '@whiskeysockets/baileys'
+import { delay } from 'baileys'
 import { snapsave } from '../../lib/scrape/fb.js'
 import { inlineCode } from '../../lib/formatter.js'
 

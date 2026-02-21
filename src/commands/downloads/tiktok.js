@@ -1,4 +1,4 @@
-import { delay } from '@whiskeysockets/baileys'
+import { delay } from 'baileys'
 import { tiktok2 } from '../../lib/scrape/tiktok.js'
 import { inlineCode } from '../../lib/formatter.js'
 

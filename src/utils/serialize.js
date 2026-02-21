@@ -15,7 +15,7 @@ import {
 	S_WHATSAPP_NET,
 	jidDecode,
 	proto
-} from '@whiskeysockets/baileys'
+} from 'baileys'
 import path from 'path';
 import fs, { statSync, unlinkSync, unlink, existsSync, readFileSync, writeFileSync } from 'fs';
 import pino from 'pino';
@@ -120,23 +120,23 @@ function normalizeGroupMeta(meta) {
 }
 
 async function getGroupParticipantName(m, store, client) {
-  if (!m.isGroup) return null;
+	if (!m.isGroup) return null;
 
-  const meta = store.groupMetadata?.[m.from];
-  if (!meta || !meta.participants) return null;
+	const meta = store.groupMetadata?.[m.from];
+	if (!meta || !meta.participants) return null;
 
-  const sender = await client.decodeJid(m.sender);
+	const sender = await client.decodeJid(m.sender);
 
-  const user = meta.participants.find(p =>
-    client.decodeJid(p.id) === sender
-  );
+	const user = meta.participants.find(p =>
+		client.decodeJid(p.id) === sender
+	);
 
-  return (
-    user?.notify ||
-    user?.name ||
-    user?.pn ||
-    null
-  );
+	return (
+		user?.notify ||
+		user?.name ||
+		user?.pn ||
+		null
+	);
 }
 
 
@@ -154,11 +154,11 @@ export function Client({ client, store }) {
 					let metadata = store.contacts[id];
 					return (metadata?.name ||
 						metadata?.verifiedName ||
-						metadata?.notify ||id.split('@')[0])
+						metadata?.notify || id.split('@')[0])
 				}
 			},
 		},
-//parsePhoneNumber('+' + id.split('@')[0]).format('INTERNATIONAL')
+		//parsePhoneNumber('+' + id.split('@')[0]).format('INTERNATIONAL')
 		lidToJid: {
 			async value(lid) {
 				if (!lidStore) return null;
@@ -521,23 +521,23 @@ export default async function serialize(client, msg, store) {
 				? m.participant
 				: m.from;
 	}
-	
+
 	const senderJid = await client.decodeJid(m.sender);
-const groupName = await getGroupParticipantName(m, store, client);
-const cachedName = store.nameCache?.[senderJid];
-const contactName = client.getName(senderJid);
-m.pushName =
-  groupName ||
-  cachedName ||
-  contactName ||
-  senderJid.split('@')[0];
-if (
-  m.pushName &&
-  !store.nameCache[senderJid] &&
-  m.pushName !== senderJid.split('@')[0]
-) {
-  store.nameCache[senderJid] = m.pushName;
-}
+	const groupName = await getGroupParticipantName(m, store, client);
+	const cachedName = store.nameCache?.[senderJid];
+	const contactName = client.getName(senderJid);
+	m.pushName =
+		groupName ||
+		cachedName ||
+		contactName ||
+		senderJid.split('@')[0];
+	if (
+		m.pushName &&
+		!store.nameCache[senderJid] &&
+		m.pushName !== senderJid.split('@')[0]
+	) {
+		store.nameCache[senderJid] = m.pushName;
+	}
 
 
 	const JidOwn = (JSON.parse(process.env.OWNER) ?? []).map(

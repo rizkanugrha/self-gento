@@ -317,6 +317,12 @@ const startBot = async () => {
             file.startsWith('tc-token'))
             .forEach(file => fs.unlinkSync(`${pathSession}/${file}`, () => { }));
     });
+<<<<<<< Updated upstream
 }, 60000 * 15); */
 
 startBot();
+=======
+}, 60000 * 15); **/
+
+startBot();
+>>>>>>> Stashed changes

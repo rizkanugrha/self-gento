@@ -1,4 +1,4 @@
-import { jidNormalizedUser } from '@whiskeysockets/baileys'
+import { jidNormalizedUser } from 'baileys'
 import util from 'util'
 export default {
     name: 'upsw',

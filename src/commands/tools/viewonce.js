@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-var { default: makeWASocket, delay, useMultiFileAuthState, fetchLatestBaileysVersion, jidNormalizedUser, DisconnectReason, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+var { default: makeWASocket, delay, useMultiFileAuthState, fetchLatestBaileysVersion, jidNormalizedUser, DisconnectReason, Browsers, makeCacheableSignalKeyStore } = require('baileys');
 import util from 'util'
 
 export default {

@@ -9,7 +9,7 @@
  * Please respect me for making this tool from the beginning.
  */
 
-import { jidNormalizedUser } from "@whiskeysockets/baileys";
+import { jidNormalizedUser } from "baileys";
 
 export async function GroupParticipants(anu, client) {
     try {

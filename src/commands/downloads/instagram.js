@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import { inlineCode } from '../../lib/formatter.js';
 const require = createRequire(import.meta.url);
 import { SnapSave } from '../../lib/scrape/snapsave.js';
-import { delay } from '@whiskeysockets/baileys';
+import { delay } from 'baileys';
 
 export default {
     name: 'ig',

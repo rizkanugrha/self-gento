@@ -19,7 +19,7 @@ import {
     normalizeMessageContent,
     isJidGroup,
     generateMessageIDV2
-} from '@whiskeysockets/baileys';
+} from 'baileys';
 
 /**
  * Low‑level power helper that sends any interactive message.

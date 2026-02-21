@@ -1,4 +1,4 @@
-import { delay } from '@whiskeysockets/baileys';
+import { delay } from 'baileys';
 import twitterdl from '../../lib/scrape/tw/tw.cjs';
 import { inlineCode } from '../../lib/formatter.js';
 
