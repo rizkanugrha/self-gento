@@ -29,27 +29,19 @@ export default {
             if (m.type == 'imageMessage' || m.quoted && m.quoted.type == 'imageMessage') {
                 const message = m.quoted ? m.quoted : m
                 const buff = await client.downloadMediaMessage(message)
-                if (flags.find(v => v.match(/nobg|removebg/))) {
-                    const data = Sticker.removeBG(buff)
-                    const hasil = new Sticker(data, { packname, author: stickerAuthor, packId: '', categories }, crop)
-                    await client.sendMessage(m.from, await hasil.toMessage(), { quoted: m })
-                    // statistics('sticker')
-                    await m.react('✅')
-                } else {
-                    const data = new Sticker(buff, { packname, author: stickerAuthor, packId: '', categories }, crop)
-                    await client.sendMessage(m.from, await data.toMessage(), { quoted: m })
-                    //  statistics('sticker')
-                    await m.react('✅')
-                }
+                const data = new Sticker(buff, { packname, author: stickerAuthor, packId: '', categories }, crop)
+                await client.sendMessage(m.from, await data.toMessage(), { quoted: m })
+                //  statistics('sticker')
+                await m.react('✅')
 
             } else if (m.type == 'videoMessage' || m.quoted && m.quoted.type == 'videoMessage') {
                 if (m.quoted ? m.quoted.seconds > 15 : m.message.videoMessage.seconds > 15) return m.reply('too long duration, max 15 seconds')
                 const message = m.quoted ? m.quoted : m
                 const buff = await client.downloadMediaMessage(message)
-                let data = await mp4ToWebp(buff, { pack: packname, author: stickerAuthor })
-                //  const data = new Sticker(buff, { packname, author: stickerAuthor, packId: '', categories })
-                await client.sendMessage(m.from, { sticker: data }, { quoted: m })
-                //statistics('sticker')
+                if (!buff) throw new Error("Gagal mengunduh video");
+                const data = new Sticker(buff, { packname, author: stickerAuthor, packId: '', categories }, crop)
+                await client.sendMessage(m.from, await data.toMessage(), { quoted: m })
+
                 await m.react('✅')
 
             } else if (m.quoted && m.quoted.type == 'stickerMessage' && !m.quoted.isAnimated) {

@@ -277,7 +277,7 @@ export function Client({ client, store }) {
 
 				if (filename) {
 					let mime = await fileTypeFromBuffer(media);
-					let filePath = path.join(process.cwd(), `${filename}.${mime.ext}`);
+					let filePath = path.join(process.cwd(), `src/assets/temp/${filename}.${mime.ext}`);
 					fs.promises.writeFile(filePath, media);
 					return filePath;
 				}

@@ -83,13 +83,31 @@ export const upload = {
 		return 'https://telegra.ph' + data[0].src;
 	},
 
+	async UguuSe(buffer) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const form = new FormData();
+				const input = Buffer.from(buffer);
+				const { ext } = await fileTypeFromBuffer(buffer);
+				form.append('files[]', input, { filename: 'data.' + ext });
+				const data = await axios.post('https://uguu.se/upload', form, {
+					headers: {
+						...form.getHeaders()
+					}
+				})
+				resolve(data.data.files[0])
+			} catch (e) {
+				reject(e)
+			}
+		})
+	},
 	async uploadImage(buffer) {
 		buffer = Buffer.isBuffer(buffer) ? buffer : readFileSync(buffer);
 		const { ext } = await fileTypeFromBuffer(buffer);
 		const form = new FormData();
-		form.append('files[]', buffer, `tmp.${ext}`);
-		const { data } = await axios.post('https://cdn.nekohime.xyz/upload', form, { headers: form.getHeaders() });
-		return data.files[0].url;
+		form.append('files[]', buffer, `tmpl.${ext}`);
+		const { data } = await axios.post('https://uguu.se/upload.php', form, { headers: form.getHeaders() });
+		return data.data.files[0];
 	},
 
 	async uploadFile(buffer) {

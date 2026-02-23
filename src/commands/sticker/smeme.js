@@ -23,9 +23,9 @@ export default {
                 let bgUrl;
                 if (flags.find(v => v.match(/nobg|removebg/))) {
                     const removed = await Sticker.removeBG(mediaData)
-                    bgUrl = await upload.telegra(removed)
+                    bgUrl = await upload.UguuSe(removed)
                 } else {
-                    bgUrl = await upload.telegra(mediaData)
+                    bgUrl = await upload.UguuSe(mediaData)
                 }
                 const res = await Sticker.memeGenerator(atas ? atas : '', bawah ? bawah : '', bgUrl)
                 const data = new Sticker(res, { packname: `${config.name}`, author: config.author })

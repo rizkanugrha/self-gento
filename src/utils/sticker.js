@@ -18,7 +18,7 @@ import addExif, { Emoji } from './exif.js';
 //import canvasGif from "canvas-gif";
 import axios from 'axios'
 import { randomBytes } from 'crypto';
-
+import { join } from 'path';
 import { fetchBuffer, isUrl, fetchAPI } from '../lib/function.js'
 import { createCanvas, registerFont } from 'canvas'
 import canvasTxt from '../lib/canvasTxt.js'
@@ -151,44 +151,6 @@ class Sticker {
         })
     }
 
-    // i think did not work yet, bcz problem at libvips installation 
-    static convertGif = (input) => {
-        return new Promise((resolve, reject) => {
-            sharp(input)
-                .gif()
-                .toBuffer()
-                .then(resolve)
-                .catch(reject)
-        })
-    }
-
-
-    /**
-     * convert video to WebP WASticker format
-     * @param {Buffer} data video to be converted
-     * @returns {Promise<Buffer} WebP Buffer
-     */
-    processAnimated = async (data) => {
-        try {
-            const input = `../../src/temp/video_${randomBytes(3).toString('hex')}.mp4`
-            const output = `../../src/temp/${randomBytes(3).toString('hex')}.webp`
-            writeFileSync(input, data.toString('binary'), 'binary')
-            const file = await new Promise((resolve) => {
-                ffmpeg(input)
-                    .inputOptions(['-y', '-t', '20'])
-                    .complexFilter(['scale=512:512:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1'])
-                    .outputOptions(['-qscale', '50', '-fs', '1M', '-vcodec', 'libwebp', '-preset', 'default', '-loop', '0', '-an', '-vsync', '0'])
-                    .format('webp')
-                    .save(output)
-                    .on('end', () => resolve(output))
-            })
-            const buffer = readFileSync(file);
-            [input, output].forEach((file) => unlinkSync(file))
-            return buffer
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     /**
      * creates meme with custom image
@@ -356,43 +318,94 @@ class Sticker {
     }
 
 
+
+
+
+    // i think did not work yet, bcz problem at libvips installation 
+    /** static convertGif = (input) => {
+         return new Promise((resolve, reject) => {
+             sharp(input)
+                 .gif()
+                 .toBuffer()
+                 .then(resolve)
+                 .catch(reject)
+         })
+     }*/
+
+
     /**
-     * mboh radong
+     * convert video to WebP WASticker format
+     * @param {Buffer} data video to be converted
+     *   const input = `./src/assets/temp/video_${randomBytes(3).toString('hex')}.mp4`;
+     *   const output = `./src/assets/temp/${randomBytes(3).toString('hex')}.webp`;
      * @returns {Promise<Buffer} WebP Buffer
      */
-    cropVideo = async (data) => {
+    processMp4ToWebp = async (data) => {
         try {
-            const input = `../../src/temp/video_${randomBytes(3).toString('hex')}.mp4`
-            const output = `../../src/temp/${randomBytes(3).toString('hex')}.webp`
-            writeFileSync(input, data.toString('binary'), 'binary')
-            const file = await new Promise((resolve) => {
+            const input = join(process.cwd(), `/src/assets/temp/video/video_${randomBytes(3).toString('hex')}.mp4`)
+            const output = join(process.cwd(), `./src/assets/temp/webp/${randomBytes(3).toString('hex')}.webp`);
+
+            // Tulis buffer data secara langsung
+            writeFileSync(input, data);
+
+            const file = await new Promise((resolve, reject) => {
                 ffmpeg(input)
-                    .inputOptions(['-y', '-t', '20'])
-                    .outputOptions([
-                        '-vcodec',
-                        'libwebp',
-                        '-vf',
-                        // eslint-disable-next-line no-useless-escape
-                        `crop=w='min(min(iw\,ih)\,500)':h='min(min(iw\,ih)\,500)',scale=500:500,setsar=1,fps=15`,
-                        '-loop',
-                        '0',
-                        '-preset',
-                        'default',
-                        '-an',
-                        '-vsync',
-                        '0',
-                        '-s',
-                        '512:512'
-                    ])
+                    .inputOptions(['-y', '-t', '15']) // batasi maksimal 15 detik
+                    .complexFilter(['scale=512:512:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1'])
+                    .outputOptions(['-qscale', '50', '-fs', '1M', '-vcodec', 'libwebp', '-preset', 'default', '-loop', '0', '-an', '-vsync', '0'])
                     .format('webp')
                     .save(output)
                     .on('end', () => resolve(output))
-            })
+                    .on('error', (err) => reject(err));
+            });
+
             const buffer = readFileSync(file);
-            [input, output].forEach((file) => unlinkSync(file))
-            return buffer
+
+            // Hapus file temp setelah selesai
+            [input, output].forEach((file) => {
+                if (existsSync(file)) unlinkSync(file);
+            });
+
+            return buffer;
         } catch (error) {
-            console.log(error);
+            console.log("Error in processAnimated:", error);
+            throw error;
+        }
+    }
+
+
+    /**
+     * convert GIF to WebP WASticker format
+     * @param {Buffer} data gif to be converted
+     * @returns {Promise<Buffer>} WebP Buffer
+     */
+    processGifToWebp = async (data) => {
+        try {
+            const input = join(process.cwd(), `/src/assets/temp/video/gif-${randomBytes(3).toString('hex')}.gif`)
+            const output = join(process.cwd(), `./src/assets/temp/webp/${randomBytes(3).toString('hex')}.webp`)
+            writeFileSync(input, data);
+
+            const file = await new Promise((resolve, reject) => {
+                ffmpeg(input)
+                    .inputOptions(['-y'])
+                    .complexFilter(['scale=512:512:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1'])
+                    .outputOptions(['-qscale', '50', '-vcodec', 'libwebp', '-preset', 'default', '-loop', '0', '-vsync', '0'])
+                    .format('webp')
+                    .save(output)
+                    .on('end', () => resolve(output))
+                    .on('error', (err) => reject(err));
+            });
+
+            const buffer = readFileSync(file);
+
+            [input, output].forEach((file) => {
+                if (existsSync(file)) unlinkSync(file);
+            });
+
+            return buffer;
+        } catch (error) {
+            console.log("Error in processGif:", error);
+            throw error;
         }
     }
 
@@ -460,35 +473,56 @@ class Sticker {
     }
 
     /**
-     * create WASticker with metadata
-     * @returns {Promise<Buffer>} WebP Buffer WASticker
-     */
+         * create WASticker with metadata
+         * @returns {Promise<Buffer>} WebP Buffer WASticker
+         */
     build = async () => {
         const data = await this._parse()
-        const mime = await this._getMimeType(data);
-        const isWebP = mime.includes('webp')
-        const isVideo = mime.startsWith('video')
-        const media = isVideo
-            ? await this.processAnimated(data)
-            : isWebP ?
-                data
-                : this.crop === 'nobg'
-                    ? await this.processNoBG(data)
-                    : Object.keys(cropType).includes(this.crop)
-                        ? await this.cropImage(data)
-                        : await this.processImage(data)
-        return await this.addMetadata(media)
+        const aww = await this._getMimeType(data);
+
+        const isWebP = aww.includes('webp') || /webp/.test(aww);
+        const isVideo = aww.startsWith('video') || /video/.test(aww);
+        const isGif = aww.includes('gif') || /image\/gif/.test(aww);
+
+        let media;
+        if (isVideo) {
+            media = await this.processMp4ToWebp(data);
+        } else if (isGif) {
+            media = await this.processGifToWebp(data);
+        } else if (isWebP) {
+            media = data;
+        } else if (this.crop === 'nobg') {
+            media = await this.processNoBG(data);
+        } else if (Object.keys(cropType).includes(this.crop)) {
+            media = await this.cropImage(data);
+        } else {
+            media = await this.processImage(data);
+        }
+
+        // 1. VALIDASI MANUAL DI DALAM UTILS
+        if (!media || !Buffer.isBuffer(media) || media.length === 0) {
+            throw new Error("Gagal membuat media buffer dari FFmpeg / Sharp.");
+        }
+
+        const finalBuffer = await this.addMetadata(media);
+
+        // 2. VALIDASI FINAL SEBELUM RETURN
+        if (!finalBuffer || !Buffer.isBuffer(finalBuffer) || finalBuffer.length === 0) {
+            throw new Error("Gagal menambahkan exif metadata ke stiker.");
+        }
+
+        return finalBuffer;
     }
 
     /**
      * Get Baileys-MD message object format
      * @returns {Promise<{ sticker: Buffer }>}
-     * @example
-     * const media = new Sticker(buffer, { packname: 'mg.bot pack', author: '@gimenz.id', packId: '', categories: 'love' })
-     * await client.sendMessage(from, await data.toMessage(), { quoted: m })
      */
     toMessage = async () => {
-        return ({ sticker: await this.build() })
+        // Karena this.build() sekarang sudah memiliki validasi ketat, 
+        // kita bisa langsung memanggilnya di sini dengan aman.
+        const bufferValid = await this.build();
+        return { sticker: bufferValid };
     }
 
     /**
